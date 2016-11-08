@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="module1_array">
+        <item>预约查档</item>
+        <item>表格下载</item>
+        <item>网上咨询</item>
+        <item>办事指南</item>
+        <item>档案报建</item>
+    </string-array>
+    <string-array name="module2_array">
+        <item>政策介绍</item>
+        <item>成果展示</item>
+        <item>照片收集</item>
+        <item>城建文化</item>
+        <item>问卷调查</item>
+    </string-array>
+    <string-array name="module3_array">
+        <item>达标获奖</item>
+        <item>最新通告</item>
+        <item>联系方式</item>
+        <item>地理位置</item>
+    </string-array>
+</resources>

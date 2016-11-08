@@ -1,0 +1,58 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        release {
+            keyAlias 'mycjda'
+            keyPassword 'ij-d3.'
+            storeFile file('mycjda_new.jks')
+            storePassword 'ij-d3.'
+        }
+    }
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+    defaultConfig {
+        applicationId "com.mycjda.mycjda"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "boolean", "LOG_DEBUG", "true"//true为打开全局日志输出,false为关闭全局日志输出
+        signingConfig signingConfigs.release
+
+        jackOptions {
+            enabled true
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+        xiaomi {
+            signingConfig signingConfigs.release
+        }
+    }
+    productFlavors {
+    }
+    dexOptions {
+        incremental true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    //Log打印工具
+    compile 'com.github.zhaokaiqiang.klog:library:1.5.0'
+    //网络请求框架
+    compile 'com.zhy:okhttputils:2.6.2'
+}

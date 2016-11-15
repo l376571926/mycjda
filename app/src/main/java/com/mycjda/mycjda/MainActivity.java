@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JsResult;
@@ -27,12 +26,8 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -53,11 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         webView = (WebView) findViewById(R.id.webView);
 
-        if (compare_date("2016-11-01 15:21", "2016-11-09 00:00", false) == 1) {
-            Log.e("liyiwei", "onCreate: ");
-            Toast.makeText(this, "app待调试", Toast.LENGTH_SHORT).show();
-            return;
-        }
         webView.setWebChromeClient(webChromeClient);
         webView.setWebViewClient(webViewClient);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -73,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.centerBtn).setOnClickListener(this);
         findViewById(R.id.rightBtn).setOnClickListener(this);
 
-        webView.loadUrl("http://www.mycjda.com/");
+        webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000013&idx=1&sn=1bdbfec1e2a866d53e9495747782ed3b&mpshare=1&scene=23&srcid=1101ynQXBCOrWtgvOfixZ4Bp#rd");
 
         listView = new ListView(this);
         listView.setBackgroundColor(Color.WHITE);
@@ -109,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             KLog.e(url);
             if (url.endsWith(".doc")) {
-                Toast.makeText(MainActivity.this, url, Toast.LENGTH_SHORT).show();
                 OkHttpUtils.get()
                         .url(url)
                         .build()
@@ -120,31 +109,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return super.shouldOverrideUrlLoading(view, url);
         }
     };
-
-    public int compare_date(String DATE1, String DATE2, boolean isDebug) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        try {
-            Date dt1;
-            if (isDebug) {
-                dt1 = df.parse(DATE1);
-            } else {
-                dt1 = new Date();
-            }
-            Date dt2 = df.parse(DATE2);
-            if (dt1.getTime() > dt2.getTime()) {
-                System.out.println("dt1 在dt2前");
-                return 1;
-            } else if (dt1.getTime() < dt2.getTime()) {
-                System.out.println("dt1在dt2后");
-                return -1;
-            } else {
-                return 0;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
 
     @Override
     public void onClick(View v) {

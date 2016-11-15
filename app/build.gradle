@@ -17,7 +17,6 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "LOG_DEBUG", "true"//true为打开全局日志输出,false为关闭全局日志输出
         signingConfig signingConfigs.release
 

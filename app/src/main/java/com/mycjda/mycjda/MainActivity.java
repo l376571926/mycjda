@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JsResult;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -75,6 +76,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
             KLog.e(url + " " + message);
             return super.onJsAlert(view, url, message, result);
+        }
+
+        @Override
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+            KLog.e(fileChooserParams);
+            return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
         }
     };
     private int forwardCount;

@@ -7,6 +7,8 @@ import com.zhy.http.okhttp.cookie.CookieJarImpl;
 import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
 import com.zhy.http.okhttp.https.HttpsUtils;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -19,6 +21,14 @@ import okhttp3.OkHttpClient;
 public class MainApplication extends Application {
     private static final int SET_CONNECTION_TIMEOUT = 5 * 1000;
     private static final int SET_SOCKET_TIMEOUT = 20 * 1000;
+    public static ExecutorService mExecutors;
+
+    public static ExecutorService getExecutors() {
+        if (mExecutors == null) {
+            mExecutors = Executors.newCachedThreadPool();
+        }
+        return mExecutors;
+    }
 
     @Override
     public void onCreate() {

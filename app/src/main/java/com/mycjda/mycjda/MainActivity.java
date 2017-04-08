@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JsResult;
@@ -26,7 +27,13 @@ import com.socks.library.KLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +44,7 @@ import okhttp3.Call;
  * 主页
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
-
+    public static final String mBaseUrl = "http://221.236.35.60/";
     private WebView webView;
     private PopupWindow mPopWindow;
     private ListView listView;
@@ -191,9 +198,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "表格下载":
                     webView.loadUrl("http://221.236.35.60/Download.aspx?Mid=251");
+                    GjfgRunable runable = new GjfgRunable(251, "Download.aspx?Mid=251", new OnParserFinishListener() {
+                        @Override
+                        public void onParserFinish(int id, List list) {
+                            if (list.size() != 0) {
+                                if (list.get(0) instanceof GjfgBean) {
+                                    List<GjfgBean> tpzsBeanList = list;
+                                    KLog.e("国家法规，数据解析完成---》" + id + " " + tpzsBeanList.size());
+                                }
+                            }
+                        }
+                    });
+                    MainApplication.getExecutors().submit(runable);
                     break;
                 case "网上咨询":
                     webView.loadUrl("http://221.236.35.60/Send.aspx?Mid=270");
+                    WslyRunnable wslyRunnable = new WslyRunnable(270, new OnParserFinishListener() {
+                        @Override
+                        public void onParserFinish(int id, List list) {
+                            if (list.size() != 0) {
+                                if (list.get(0) instanceof WslyBean) {
+                                    List<WslyBean> tpzsBeanList = list;
+                                    KLog.e("网上留言，数据解析完成---》" + id + " " + tpzsBeanList.size());
+                                }
+                            }
+                        }
+                    });
+                    MainApplication.getExecutors().submit(wslyRunnable);
                     break;
                 case "办事指南":
                     webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000002&idx=1&sn=7298da84ff738740fac73852bc7a12f7&mpshare=1&scene=23&srcid=1101hjqSUdBsEeMfv03nDgxz#rd");
@@ -204,13 +235,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 //第二栏
                 case "政策介绍":
-                    webView.loadUrl("http://221.236.35.60/News.aspx?Mid=110");
+                    webView.loadUrl("http://221.236.35.60/News.aspx?Mid=110");//115也是这个页面
+                    GjfgRunable gjfgRunable = new GjfgRunable(110, "News.aspx?Mid=110", new OnParserFinishListener() {
+                        @Override
+                        public void onParserFinish(int id, List list) {
+                            if (list.size() != 0) {
+                                if (list.get(0) instanceof GjfgBean) {
+                                    List<GjfgBean> tpzsBeanList = list;
+                                    KLog.e("国家法规，数据解析完成---》" + id + " " + tpzsBeanList.size());
+                                }
+                            }
+                        }
+                    });
+                    MainApplication.getExecutors().submit(gjfgRunable);
                     break;
                 case "成果展示":
                     webView.loadUrl("http://221.236.35.60/Periodical.aspx?Mid=274");
                     break;
                 case "照片收集":
                     webView.loadUrl("http://221.236.35.60/Collection.aspx?Mid=272");
+                    HtmlParser.tpzsParser();
+                    MainApplication.getExecutors().submit(new TpzsRunable(272, new OnParserFinishListener() {
+                        @Override
+                        public void onParserFinish(int id, List list) {
+                            if (list.size() != 0) {
+                                if (list.get(0) instanceof TpzsBean) {
+                                    List<TpzsBean> tpzsBeanList = list;
+                                    KLog.e("图片展示，数据解析完成---》" + id + " " + tpzsBeanList.size());
+                                }
+                            }
+                        }
+                    }));
                     break;
                 case "城建文化":
                     webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000013&idx=1&sn=1bdbfec1e2a866d53e9495747782ed3b&mpshare=1&scene=23&srcid=1101ynQXBCOrWtgvOfixZ4Bp#rd");
@@ -237,5 +292,210 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         }
+    }
+
+    /**
+     * 网上留言
+     */
+    private static class WslyRunnable implements Runnable {
+        private int id;
+        private OnParserFinishListener onParserFinishListener;
+
+        public WslyRunnable(int id, OnParserFinishListener onParserFinishListener) {
+            this.id = id;
+            this.onParserFinishListener = onParserFinishListener;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Document document = Jsoup.connect(mBaseUrl + "Send.aspx?Mid=270").get();
+                Elements wsly = document.getElementsByClass("wsly");
+                for (Element element : wsly) {
+                    Elements ywjd = element.getElementsByClass("ywjd");
+                    List<WslyBean> wslyBeanList = new ArrayList<>();
+                    for (Element element1 : ywjd) {
+                        String topic = null;
+                        String date = null;
+                        String question = null;
+                        String replier = null;
+                        String answer = null;
+
+                        Elements wtbt = element1.getElementsByClass("wtbt");
+                        for (Element element2 : wtbt) {//数据有问题
+                            topic = element2.text();//主题：我上传的图片你们看到了吗？2016-06-22
+                            Elements span = element2.getElementsByTag("span");
+                            for (Element element3 : span) {
+                                date = element3.text();
+                            }
+                        }
+                        Elements p = element1.getElementsByTag("p");
+                        for (Element element2 : p) {
+                            question = element2.text();
+                        }
+                        Elements wthd = element1.getElementsByClass("wthd");
+                        for (Element element2 : wthd) {
+                            Elements span = element2.getElementsByTag("span");
+                            for (Element element3 : span) {
+                                replier = element3.text();
+                            }
+                            answer = element2.text();
+                        }
+                        WslyBean wslyBean = new WslyBean();
+                        wslyBean.setTopic(topic);
+                        wslyBean.setDate(date);
+                        wslyBean.setQuestion(question);
+                        wslyBean.setReplier(replier);
+                        wslyBean.setAnswer(answer);
+                        wslyBeanList.add(wslyBean);
+
+                        KLog.e(wslyBean);
+                    }
+                    if (onParserFinishListener != null) {
+                        onParserFinishListener.onParserFinish(id, wslyBeanList);
+                        onParserFinishListener = null;
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * 国家法规
+     */
+    private static class GjfgRunable implements Runnable {
+        private int id;
+        private String requestPath;
+        private OnParserFinishListener onParserFinishListener;
+
+        public GjfgRunable(int id, String requestPath, OnParserFinishListener onParserFinishListener) {
+            this.id = id;
+            this.requestPath = requestPath;
+            this.onParserFinishListener = onParserFinishListener;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Document document = Jsoup.connect(mBaseUrl + requestPath).get();
+                Elements wzlist = document.getElementsByClass("wzlist");
+                List<GjfgBean> gjfgBeanList = new ArrayList<>();
+                for (Element element : wzlist) {
+                    Elements li = element.getElementsByTag("li");
+                    for (Element element1 : li) {
+                        Elements a = element1.getElementsByTag("a");
+                        String url = null;
+                        String title = null;
+                        String date = null;
+                        for (Element element2 : a) {
+                            String href = element2.attr("href");
+                            url = mBaseUrl + href;
+                            title = element2.attr("title");
+                        }
+                        Elements span = element1.getElementsByTag("span");
+                        for (Element element2 : span) {
+                            Elements span1 = element2.getElementsByTag("span");
+                            for (Element element3 : span1) {
+                                date = element3.text();
+                            }
+                        }
+                        if (!TextUtils.isEmpty(url)) {
+                            GjfgBean gjfgBean = new GjfgBean();
+                            gjfgBean.setUrl(url);
+                            gjfgBean.setTitle(title);
+                            gjfgBean.setDate(date);
+                            gjfgBeanList.add(gjfgBean);
+
+                            KLog.e(gjfgBean.toString());
+                        }
+                    }
+                }
+                if (onParserFinishListener != null) {
+                    onParserFinishListener.onParserFinish(id, gjfgBeanList);
+                    onParserFinishListener = null;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * 图片展示
+     */
+    private static class TpzsRunable implements Runnable {
+        private int id;
+        private OnParserFinishListener onParserFinishListener;
+
+        public TpzsRunable(int id, OnParserFinishListener onParserFinishListener) {
+            this.id = id;
+            this.onParserFinishListener = onParserFinishListener;
+            MainApplication.getExecutors().submit(this);
+        }
+
+        @Override
+        public void run() {
+            try {
+                Document document = Jsoup.connect(mBaseUrl + "Collection.aspx?Mid=272").get();
+                Elements tpzs = document.getElementsByClass("tpzs");
+                List<TpzsBean> tpzsBeanList = new ArrayList<>();
+                for (Element element : tpzs) {
+                    Elements li = element.getElementsByTag("li");
+                    for (Element element1 : li) {
+                        String url = null;
+                        String title = null;
+                        String date = null;
+                        String good = null;
+                        String author = null;
+
+                        Elements tp = element1.getElementsByClass("tp");
+                        for (Element element2 : tp) {
+                            Elements a = element2.getElementsByTag("a");
+                            for (Element element3 : a) {
+                                String href = element3.attr("href");
+                                url = mBaseUrl + href;
+                            }
+                        }
+                        Elements zjbt = element1.getElementsByClass("zjbt");
+                        for (Element element2 : zjbt) {
+                            title = element2.text();
+                        }
+                        Elements dz = element1.getElementsByClass("dz");
+                        for (Element element2 : dz) {
+                            Elements span = element2.getElementsByTag("span");
+                            good = span.text();
+                            Elements strong = element2.getElementsByTag("strong");
+                            author = strong.text();
+                        }
+                        if (!TextUtils.isEmpty(url)) {
+                            TpzsBean tpzsBean = new TpzsBean();
+                            tpzsBean.setImage(url);
+                            tpzsBean.setTitle(title);
+                            tpzsBean.setGood(good);
+                            tpzsBean.setAuthor(author);
+                            tpzsBeanList.add(tpzsBean);
+
+                            KLog.e(tpzsBean.toString());
+                        }
+                    }
+                }
+                if (onParserFinishListener != null) {
+                    onParserFinishListener.onParserFinish(id, tpzsBeanList);
+                    onParserFinishListener = null;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public interface OnParserFinishListener {
+        void onParserFinish(int id, List list);
     }
 }

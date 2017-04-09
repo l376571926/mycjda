@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">绵阳城建档案</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_basic">BasicActivity</string>
+    <string name="title_activity_basic_text_list">BasicTextListActivity</string>
 </resources>

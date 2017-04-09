@@ -1,4 +1,4 @@
-package com.mycjda.mycjda;
+package com.mycjda.mycjda.other;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.mycjda.mycjda;
+package com.mycjda.mycjda.bean;
 
 /**
  * 图片征集http://221.236.35.60/Collection.aspx?Mid=272

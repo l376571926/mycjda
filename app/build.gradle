@@ -33,10 +33,13 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.0.0'
     //Log打印工具
-    compile 'com.github.zhaokaiqiang.klog:library:1.5.0'
     //网络请求框架
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.github.zhaokaiqiang.klog:library:1.5.0'
     compile 'com.zhy:okhttputils:2.6.2'
     compile 'org.jsoup:jsoup:1.10.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }

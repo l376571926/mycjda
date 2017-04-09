@@ -1,4 +1,4 @@
-package com.mycjda.mycjda;
+package com.mycjda.mycjda.bean;
 
 /**
  * Created by liyiwei on 2017/4/8.

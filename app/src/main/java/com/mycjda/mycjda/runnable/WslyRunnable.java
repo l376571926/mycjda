@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.BATTERY_SERVICE;
-
 
 /**
  * 网上留言
@@ -32,7 +30,7 @@ public class WslyRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            Document document = Jsoup.connect(BATTERY_SERVICE + Constants.PATH_WSZX).get();
+            Document document = Jsoup.connect(Constants.BASE_URL + Constants.PATH_WSZX).get();
             Elements wsly = document.getElementsByClass("wsly");
             for (Element element : wsly) {
                 Elements ywjd = element.getElementsByClass("ywjd");

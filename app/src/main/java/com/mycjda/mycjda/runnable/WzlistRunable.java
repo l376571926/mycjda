@@ -2,6 +2,7 @@ package com.mycjda.mycjda.runnable;
 
 import android.text.TextUtils;
 
+import com.mycjda.mycjda.MainApplication;
 import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.bean.GjfgBean;
 import com.mycjda.mycjda.other.Constants;
@@ -28,6 +29,7 @@ public class WzlistRunable implements Runnable {
         this.id = id;
         this.requestPath = requestPath;
         this.onParserFinishListener = onParserFinishListener;
+        MainApplication.getExecutors().submit(this);
     }
 
     @Override

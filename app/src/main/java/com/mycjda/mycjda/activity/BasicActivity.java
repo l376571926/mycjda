@@ -7,13 +7,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.mycjda.mycjda.other.Constants;
 import com.mycjda.mycjda.MainApplication;
+import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.R;
 import com.mycjda.mycjda.adapter.GjfgAdapter;
 import com.mycjda.mycjda.adapter.MyAdapter;
 import com.mycjda.mycjda.bean.GjfgBean;
 import com.mycjda.mycjda.bean.TpzsBean;
+import com.mycjda.mycjda.other.Constants;
+import com.mycjda.mycjda.runnable.TpzsRunable;
+import com.mycjda.mycjda.runnable.WzlistRunable;
 import com.socks.library.KLog;
 
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ public class BasicActivity extends AppCompatActivity {
                 tpzsBeanList = new ArrayList<>();
                 myAdapter = new MyAdapter(BasicActivity.this, tpzsBeanList);
                 mRecyclerView.setAdapter(myAdapter);
-                MainActivity.TpzsRunable tpzsRunable = new MainActivity.TpzsRunable(mRunnableId, new MainActivity.OnParserFinishListener() {
+                TpzsRunable tpzsRunable = new TpzsRunable(mRunnableId, new OnParserFinishListener() {
                     @Override
                     public void onParserFinish(int id, final List list) {
                         if (list.size() != 0) {
@@ -81,7 +84,7 @@ public class BasicActivity extends AppCompatActivity {
                 gjfgBeanList = new ArrayList<>();
                 gjfgAdapter = new GjfgAdapter(BasicActivity.this, gjfgBeanList);
                 mRecyclerView.setAdapter(gjfgAdapter);
-                MainActivity.WzlistRunable wzlistRunable = new MainActivity.WzlistRunable(mRunnableId, path, new MainActivity.OnParserFinishListener() {
+                new WzlistRunable(mRunnableId, path, new OnParserFinishListener() {
                     @Override
                     public void onParserFinish(int id, final List list) {
                         if (list.size() != 0) {
@@ -99,7 +102,6 @@ public class BasicActivity extends AppCompatActivity {
                         }
                     }
                 });
-                MainApplication.getExecutors().submit(wzlistRunable);
                 break;
             default:
                 break;

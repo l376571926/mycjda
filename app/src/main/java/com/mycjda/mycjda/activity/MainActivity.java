@@ -23,9 +23,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.R;
 import com.mycjda.mycjda.other.Constants;
 import com.mycjda.mycjda.other.DoubleClickExitApp;
+import com.mycjda.mycjda.runnable.ZwnrRunnable;
 import com.socks.library.KLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
@@ -226,6 +228,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case "城建文化":
                     webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000013&idx=1&sn=1bdbfec1e2a866d53e9495747782ed3b&mpshare=1&scene=23&srcid=1101ynQXBCOrWtgvOfixZ4Bp#rd");
+                    new ZwnrRunnable(233, new OnParserFinishListener() {
+                        @Override
+                        public void onParserFinish(int id, List list) {
+
+                        }
+                    });
                     break;
                 case "网上调查":
                     webView.loadUrl("http://221.236.35.60/SadcList.aspx?Mid=271");

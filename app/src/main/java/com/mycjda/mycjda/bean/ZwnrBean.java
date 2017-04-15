@@ -6,7 +6,7 @@ import java.util.List;
  * Created by liyiwei on 2017/4/9.
  */
 
-public class WznrBean {
+public class ZwnrBean {
     private String title;
     private String from;
     private String author;
@@ -16,7 +16,7 @@ public class WznrBean {
 
     @Override
     public String toString() {
-        return "WznrBean{" +
+        return "ZwnrBean{" +
                 "title='" + title + '\'' +
                 ", from='" + from + '\'' +
                 ", author='" + author + '\'' +

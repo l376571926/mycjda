@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 国家法规,审查公千,表格下载
+ * 国家法规，审查公告，表格下载，网上调查
  */
 public class WzlistRunable implements Runnable {
     private int id;
@@ -45,10 +45,17 @@ public class WzlistRunable implements Runnable {
                     String url = null;
                     String title = null;
                     String date = null;
-                    for (Element element2 : a) {
+                    if (!a.isEmpty()) {
+                        Element element2 = a.get(0);
                         String href = element2.attr("href");
                         url = Constants.BASE_URL + href;
-                        title = element2.text();
+                        String title1 = element2.attr("title");
+                        String title2 = element2.text();
+                        if (!TextUtils.isEmpty(title1)) {
+                            title = title1;
+                        } else {
+                            title = title2;
+                        }
                     }
                     Elements span = element1.getElementsByTag("span");
                     for (Element element2 : span) {

@@ -23,11 +23,9 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.R;
 import com.mycjda.mycjda.other.Constants;
 import com.mycjda.mycjda.other.DoubleClickExitApp;
-import com.mycjda.mycjda.runnable.ZwnrRunnable;
 import com.socks.library.KLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
@@ -204,13 +202,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     webView.loadUrl("http://221.236.35.60/ArchiveSearch.aspx?Mid=276");
                     break;
                 case "表格下载":
-                    toBasicActivity(Constants.PATH_BGXZ, 251);
+                    toBasicActivity(BasicActivity.class, Constants.PATH_BGXZ, 251);
                     break;
                 case "在线咨询":
-                    toBasicActivity(Constants.PATH_WSZX, 270);
+                    toBasicActivity(BasicActivity.class, Constants.PATH_WSZX, 270);
                     break;
                 case "办事指南":
-                    webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000002&idx=1&sn=7298da84ff738740fac73852bc7a12f7&mpshare=1&scene=23&srcid=1101hjqSUdBsEeMfv03nDgxz#rd");
+                    toBasicActivity(ArticleActivity.class, Constants.PATH_BSZN, 231);
                     break;
                 case "档案报建":
                     webView.loadUrl("http://221.236.35.60:8012/UserLoginGather.aspx");
@@ -218,33 +216,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 //第二栏
                 case "国家法规":
-                    toBasicActivity(Constants.PATH_ZCJS, 110);
+                    toBasicActivity(BasicActivity.class, Constants.PATH_ZCJS, 110);
                     break;
                 case "编研成果":
                     webView.loadUrl("http://221.236.35.60/Periodical.aspx?Mid=274");
                     break;
                 case "图片征集":
-                    toBasicActivity(Constants.PATH_ZPSJ, 272);
+                    toBasicActivity(BasicActivity.class, Constants.PATH_ZPSJ, 272);
                     break;
                 case "城建文化":
-                    webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000013&idx=1&sn=1bdbfec1e2a866d53e9495747782ed3b&mpshare=1&scene=23&srcid=1101ynQXBCOrWtgvOfixZ4Bp#rd");
-                    new ZwnrRunnable(233, new OnParserFinishListener() {
-                        @Override
-                        public void onParserFinish(int id, List list) {
+                    toBasicActivity(ArticleActivity.class, Constants.PATH_CJWH, 233);
 
-                        }
-                    });
                     break;
                 case "网上调查":
-                    webView.loadUrl("http://221.236.35.60/SadcList.aspx?Mid=271");
+                    toBasicActivity(BasicActivity.class, Constants.PATH_WJDC, 271);
                     break;
 
                 //第三栏
                 case "达标获奖":
-                    webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000004&idx=1&sn=c640e252c9dd45508ef0d033941003a6&mpshare=1&scene=23&srcid=1101UYEBIW9knlfj8CSEpg4l#rd");
+                    toBasicActivity(ArticleActivity.class, Constants.PATH_DBHJ, 265);
                     break;
                 case "审查公告":
-                    toBasicActivity(Constants.PATH_ZXTG, 268);
+                    toBasicActivity(BasicActivity.class, Constants.PATH_ZXTG, 268);
                     break;
                 case "联系我们":
                     webView.loadUrl("http://mp.weixin.qq.com/s?__biz=MzIyODIzNTE5Mg==&mid=100000011&idx=1&sn=5bc5cb45b8c3e068157ecb91442d257a&mpshare=1&scene=23&srcid=1101KUdzlR7Dk6IoeMjctm0m#rd");
@@ -259,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void toBasicActivity(String path, int id) {
-        Intent intent = new Intent(MainActivity.this, BasicActivity.class);
+    private void toBasicActivity(Class<?> cls, String path, int id) {
+        Intent intent = new Intent(MainActivity.this, cls);
         intent.putExtra("path", path);
         intent.putExtra("id", id);
         startActivity(intent);

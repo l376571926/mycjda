@@ -7,15 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.mycjda.mycjda.MainApplication;
 import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.R;
 import com.mycjda.mycjda.adapter.GjfgAdapter;
 import com.mycjda.mycjda.adapter.MyAdapter;
+import com.mycjda.mycjda.adapter.WslyAdapter;
 import com.mycjda.mycjda.bean.GjfgBean;
 import com.mycjda.mycjda.bean.TpzsBean;
+import com.mycjda.mycjda.bean.WslyBean;
 import com.mycjda.mycjda.other.Constants;
 import com.mycjda.mycjda.runnable.TpzsRunable;
+import com.mycjda.mycjda.runnable.WslyRunnable;
 import com.mycjda.mycjda.runnable.WzlistRunable;
 import com.socks.library.KLog;
 
@@ -30,6 +32,8 @@ public class BasicActivity extends AppCompatActivity {
     private List<GjfgBean> gjfgBeanList;
     private GjfgAdapter gjfgAdapter;
     private int mRunnableId;
+    private WslyAdapter wslyAdapter;
+    private List<WslyBean> wslyBeanList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +55,37 @@ public class BasicActivity extends AppCompatActivity {
 
         String path = getIntent().getStringExtra("path");
         mRunnableId = getIntent().getIntExtra("id", 0);
-        KLog.e(path + " " + mRunnableId);
+//        KLog.e(path + " " + mRunnableId);
 
         switch (String.valueOf(path)) {
+            case Constants.PATH_WSZX:
+                wslyBeanList = new ArrayList<>();
+                wslyAdapter = new WslyAdapter(BasicActivity.this, wslyBeanList);
+                mRecyclerView.setAdapter(wslyAdapter);
+                new WslyRunnable(270, new OnParserFinishListener() {
+                    @Override
+                    public void onParserFinish(int id, final List list) {
+                        if (!list.isEmpty()) {
+                            if (list.get(0) instanceof WslyBean) {
+//                                KLog.e("图片展示，数据解析完成---》" + id + " " + ((List<WslyBean>) list).size());
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BasicActivity.this.wslyBeanList.clear();
+                                        BasicActivity.this.wslyBeanList.addAll(list);
+                                        wslyAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+                break;
             case Constants.PATH_ZPSJ:
                 tpzsBeanList = new ArrayList<>();
                 myAdapter = new MyAdapter(BasicActivity.this, tpzsBeanList);
                 mRecyclerView.setAdapter(myAdapter);
-                TpzsRunable tpzsRunable = new TpzsRunable(mRunnableId, new OnParserFinishListener() {
+                new TpzsRunable(mRunnableId, new OnParserFinishListener() {
                     @Override
                     public void onParserFinish(int id, final List list) {
                         if (list.size() != 0) {
@@ -76,8 +103,8 @@ public class BasicActivity extends AppCompatActivity {
                         }
                     }
                 });
-                MainApplication.getExecutors().submit(tpzsRunable);
                 break;
+            case Constants.PATH_WJDC:
             case Constants.PATH_BGXZ:
             case Constants.PATH_ZXTG:
             case Constants.PATH_ZCJS:

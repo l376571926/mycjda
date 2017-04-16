@@ -1,9 +1,9 @@
 package com.mycjda.mycjda.runnable;
 
+import com.mycjda.mycjda.MainApplication;
 import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.bean.WslyBean;
 import com.mycjda.mycjda.other.Constants;
-import com.socks.library.KLog;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,6 +25,7 @@ public class WslyRunnable implements Runnable {
     public WslyRunnable(int id, OnParserFinishListener onParserFinishListener) {
         this.id = id;
         this.onParserFinishListener = onParserFinishListener;
+        MainApplication.getExecutors().submit(this);
     }
 
     @Override
@@ -37,18 +38,12 @@ public class WslyRunnable implements Runnable {
                 List<WslyBean> wslyBeanList = new ArrayList<>();
                 for (Element element1 : ywjd) {
                     String topic = null;
-                    String date = null;
                     String question = null;
-                    String replier = null;
                     String answer = null;
 
                     Elements wtbt = element1.getElementsByClass("wtbt");
                     for (Element element2 : wtbt) {//数据有问题
                         topic = element2.text();//主题：我上传的图片你们看到了吗？2016-06-22
-                        Elements span = element2.getElementsByTag("span");
-                        for (Element element3 : span) {
-                            date = element3.text();
-                        }
                     }
                     Elements p = element1.getElementsByTag("p");
                     for (Element element2 : p) {
@@ -56,25 +51,18 @@ public class WslyRunnable implements Runnable {
                     }
                     Elements wthd = element1.getElementsByClass("wthd");
                     for (Element element2 : wthd) {
-                        Elements span = element2.getElementsByTag("span");
-                        for (Element element3 : span) {
-                            replier = element3.text();
-                        }
                         answer = element2.text();
                     }
                     WslyBean wslyBean = new WslyBean();
                     wslyBean.setTopic(topic);
-                    wslyBean.setDate(date);
                     wslyBean.setQuestion(question);
-                    wslyBean.setReplier(replier);
                     wslyBean.setAnswer(answer);
                     wslyBeanList.add(wslyBean);
 
-                    KLog.e(wslyBean);
+//                    KLog.e(wslyBean);
                 }
                 if (onParserFinishListener != null) {
                     onParserFinishListener.onParserFinish(id, wslyBeanList);
-                    onParserFinishListener = null;
                 }
             }
 

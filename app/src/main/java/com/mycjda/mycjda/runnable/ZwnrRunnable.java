@@ -4,7 +4,6 @@ import com.mycjda.mycjda.MainApplication;
 import com.mycjda.mycjda.OnParserFinishListener;
 import com.mycjda.mycjda.bean.ZwnrBean;
 import com.mycjda.mycjda.other.Constants;
-import com.socks.library.KLog;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,10 +22,12 @@ import java.util.List;
 
 public class ZwnrRunnable implements Runnable {
     private int id;
+    private String requestPath;
     private OnParserFinishListener onParserFinishListener;
 
-    public ZwnrRunnable(int id, OnParserFinishListener onParserFinishListener) {
+    public ZwnrRunnable(int id, String requestPath, OnParserFinishListener onParserFinishListener) {
         this.id = id;
+        this.requestPath = requestPath;
         this.onParserFinishListener = onParserFinishListener;
         MainApplication.getExecutors().submit(this);
     }
@@ -34,14 +35,14 @@ public class ZwnrRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            Document document = Jsoup.connect(Constants.BASE_URL + Constants.PATH_CJWH).get();
+            Document document = Jsoup.connect(Constants.BASE_URL + requestPath).get();
             ZwnrBean zwnrBean = new ZwnrBean();
             Elements zwnr = document.getElementsByClass("zwnr");
             for (Element element : zwnr) {
                 Elements h2 = element.getElementsByTag("h2");
                 for (Element element1 : h2) {
                     String title = element1.text();
-                    KLog.e(title);
+//                    KLog.e(title);
                     zwnrBean.setTitle(title);
                 }
             }
@@ -51,7 +52,7 @@ public class ZwnrRunnable implements Runnable {
                 for (int i = 0; i < span.size(); i++) {
                     Element element2 = span.get(i);
                     String text = element2.text();
-                    KLog.e(text);
+//                    KLog.e(text);
                     switch (i) {
                         case 0:
                             zwnrBean.setFrom(text);
@@ -88,7 +89,13 @@ public class ZwnrRunnable implements Runnable {
                 }
                 zwnrBean.setContentList(stringList);
             }
-            KLog.e(zwnrBean.toString());
+
+            if (onParserFinishListener != null) {
+                List<ZwnrBean> list = new ArrayList<>(1);
+                list.add(zwnrBean);
+                onParserFinishListener.onParserFinish(id, list);
+            }
+//            KLog.e(zwnrBean.toString());
 
         } catch (IOException e) {
             e.printStackTrace();

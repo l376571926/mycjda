@@ -19,7 +19,8 @@
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginTop="5dp"
-        tools:text="[2016-06-21]" />
+        android:text="[2016-06-21]" />
 
 </LinearLayout>

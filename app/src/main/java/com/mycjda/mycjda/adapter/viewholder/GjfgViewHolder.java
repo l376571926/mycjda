@@ -1,6 +1,10 @@
 package com.mycjda.mycjda.adapter.viewholder;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,7 +21,6 @@ import java.util.List;
 public class GjfgViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private List<GjfgBean> gjfgBeanList;
     private TextView titleTv;
-    private TextView dateTv;
     private int position;
 
     public GjfgViewHolder(View itemView, List<GjfgBean> gjfgBeanList) {
@@ -25,7 +28,7 @@ public class GjfgViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         itemView.setOnClickListener(this);
         this.gjfgBeanList = gjfgBeanList;
         titleTv = (TextView) itemView.findViewById(R.id.title);
-        dateTv = (TextView) itemView.findViewById(R.id.date);
+        TextView dateTv = (TextView) itemView.findViewById(R.id.date);
     }
 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -35,8 +38,13 @@ public class GjfgViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         String url = gjfgBean.getUrl();
         String date = gjfgBean.getDate();
 
-        titleTv.setText(title);
-        dateTv.setText(date);
+        titleTv.setText("");
+        titleTv.append(title + "\n");
+        if (date != null) {
+            SpannableString string = new SpannableString(date);
+            string.setSpan(new ForegroundColorSpan(Color.WHITE), 0, date.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            titleTv.append(string);
+        }
     }
 
     @Override
